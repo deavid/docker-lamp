@@ -7,3 +7,9 @@ services:
      - ./master-webserver/index.html:/var/www/html/index.html
     ports:
      - "85:80"
+  php-apache-1:
+    image: php:7.3-apache-stretch
+    volumes:
+     - ./www/php-apache-1:/var/www/html/
+    ports:
+      - "86:80"
