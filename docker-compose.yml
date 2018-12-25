@@ -3,8 +3,8 @@ services:
   master-webserver:
     image: nginx:1.14
     volumes:
-     - ./master-webserver/nginx.default-site.conf:/etc/nginx/conf.d/default.conf
-     - ./master-webserver/index.html:/var/www/html/index.html
+     - ./master-webserver/sites-enabled:/etc/nginx/conf.d
+     - ./www:/var/www
     ports:
      - "85:80"
   php-apache-1:
