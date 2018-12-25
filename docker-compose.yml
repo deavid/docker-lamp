@@ -24,7 +24,6 @@ services:
       - MYSQL_ROOT_PASSWORD
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
-    container_name: phpmyadmin
     environment:
       - PMA_HOST=mysql-1
     ports:
