@@ -6,7 +6,7 @@ services:
      - ./master-webserver/sites-enabled:/etc/nginx/conf.d
      - ./www:/var/www
     ports:
-     - "85:80"
+     - "85:85"
   php-apache-1:
     image: php:7.3-apache-stretch
     volumes:
@@ -22,6 +22,13 @@ services:
     #   - "33061:3306"
     environment:
       - MYSQL_ROOT_PASSWORD
+  postgresql-1:
+    image: postgres:11
+    volumes:
+     - ./postgresql-1/pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD
+      - PGDATA=/var/lib/postgresql/data/pgdata
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
     environment:
@@ -30,3 +37,10 @@ services:
     #  - 8081:80
     volumes:
      - /sessions
+  pgadmin4:
+    build: ./pgadmin4
+    ports:
+      - "5050:5050"
+    environment:
+      - DEFAULT_USER=postgres
+      - DEFAULT_PASSWORD

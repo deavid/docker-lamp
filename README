@@ -20,3 +20,4 @@ to resolve the following domains to 127.0.0.1:
 
  - php-apache-1
  - phpmyadmin
+ - pgadmin4
