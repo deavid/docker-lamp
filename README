@@ -1,1 +1,13 @@
 LAMP server over Docker compose
+------------------------------------
+
+On the first run, mysql database needs a root password.
+To do this, execute from this folder:
+
+$ MYSQL_ROOT_PASSWORD=yourpassword docker-compose up
+
+Be aware that this password will probably be saved into your
+bash history.
+
+Once this boots up, you can safely close it and use the regular
+command without password from now on.
