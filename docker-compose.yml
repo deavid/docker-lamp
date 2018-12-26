@@ -76,3 +76,17 @@ services:
       - "1"           # watch the python file and reload
       - --wsgi-file
       - foobar.py     # name of the python file to load
+  sftp-php-apache-1:
+    image: atmoz/sftp:debian-stretch
+    volumes:
+      - ./www/php-apache-1:/home/admin/php-apache-1
+    ports:
+      - "2201:22"
+    command: admin:passwordadmin:1000
+  sftp-python-uwsgi-1:
+    image: atmoz/sftp:debian-stretch
+    volumes:
+      - ./www/python-uwsgi-1:/home/admin/python-uwsgi-1
+    ports:
+      - "2202:22"
+    command: admin:passwordadmin2:1000
