@@ -1,24 +1,116 @@
-LAMP server over Docker compose
-------------------------------------
+LAMP server over Docker Compose
+===================================
 
-On the first run, mysql database needs a root password.
-To do this, execute from this folder:
+LICENSE: MIT (Unless otherwise stated)
 
-$ MYSQL_ROOT_PASSWORD=yourpassword docker-compose up
+This code is the result of a tutorial that I'm doing in
+my blog at deavid.wordpress.com
+
+The main point is to demonstrate with as less code as
+possible a playground that could easily be transformed
+to a server in production that properly isolates each
+website, so even if they contained serious vulnerabilities,
+the other tenants would be not affected.
+
+Currently this spins up the following services:
+
+- Nginx (master)
+  - Subfolders
+  - Virtualhosts
+- PHP + Apache example
+- PHP + FastCGI
+- Python + uWSGI
+- MySQL
+- PhpMyAdmin
+- PostgreSQL
+- PgAdmin4
+
+Virtual hosts require your /etc/hosts file to be modified.
+See "Emulated domains" chapter bellow.
+
+Database servers and PgAdmin4 require a password in order
+to setup the first root account.
+See "Starting up for the first time" bellow.
+
+Once everything is setup properly, you can do as usual::
+
+  $ docker-compose up
+
+
+Starting up for the first time
+---------------------------------
+
+On the first run, mysql, postgres and pgadmin4 require
+a setup step that creates the root accounts.
+
+To do this, execute from this folder::
+
+  $ MYSQL_ROOT_PASSWORD=yourpassword docker-compose up -d mysql-1
+  $ POSTGRES_PASSWORD=yourpassword docker-compose up -d postgresql-1
+  $ DEFAULT_PASSWORD=yourpassword docker-compose up -d pgadmin4
 
 Be aware that this password will probably be saved into your
 bash history.
 
-Once this boots up, you can safely close it and use the regular
-command without password from now on.
+Once this boots up, you can safely stop the containers and use
+the regular "docker-compose up" without passwords from now on.
 
 Emulated domains
 -------------------
 
 To enable the domains on this demo you need to edit your hosts file
-to resolve the following domains to 127.0.0.1:
+to resolve the following names to 127.0.0.1:
 
  - php-apache-1
  - php-fpm-1
  - phpmyadmin
  - pgadmin4
+
+The suggested line to add would be::
+
+  127.0.0.1   php-apache-1 php-fpm-1 phpmyadmin pgadmin4
+
+Be aware that some browsers could require a restart after the change.
+
+Information on how to use this repository
+--------------------------------------------
+
+After proper setup (see chapters above), run "docker-compose up -d"
+Here is some info for each service:
+
+- Nginx:
+  - listening on port 85; so you can run this for testing
+    purposes without uninstalling your local webservers.
+  - localhost as domain name contains subfolders for different tests:
+    - localhost:85/php-apache-1/
+    - localhost:85/phpmyadmin/
+    - localhost:85/python-uwsgi-1/
+  - domains/virtual-hosts:
+    - php-apache-1:85
+    - php-fpm-1:85
+    - phpmyadmin:85
+    - pgadmin4:85
+- MySQL:
+  - Login security has been lowered for compatibility reasons
+  - Admin user is "root"
+- PhpMyAdmin:
+  - Just the regular myadmin. Use "root" and "yourpassword".
+- PostgreSQL:
+  - Admin user is "postgres"
+  - Has "trust" permissions for localhost inside same container
+- PgAdmin4:
+  - Admin user is "postgres". Use "root" and "yourpassword".
+  - Once logged in, create a connection to host "postgresql-1"
+    and user "postgres", password "yourpassword".
+
+All code is provided for learning purposes. You can adapt this for
+your needs at your own risk.
+
+Thanks to all people that created the images required for this to work.
+
+Also, pgadmin4 image was copied and adapted from:
+https://github.com/fenglc/dockercloud-pgadmin4/
+
+If you need any other licensing (not likely because is MIT licensed)
+or removing the license notice itself, feel free to contact me via email
+at deavidsedice@gmail.com
