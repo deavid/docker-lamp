@@ -48,8 +48,31 @@ services:
      - /sessions
   pgadmin4:
     build: ./pgadmin4
+    image: lamp/pgadmin4
     ports:
       - "5050:5050"
     environment:
       - DEFAULT_USER=postgres
       - DEFAULT_PASSWORD
+  python-uwsgi:
+    build: ./python-uwsgi
+    image: lamp/python-uwsgi
+  python-uwsgi-1:
+    image: lamp/python-uwsgi
+    depends_on:
+      - python-uwsgi
+    volumes:
+      - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py
+    command:
+      - uwsgi
+      - --uid
+      - www-data      # user to log in
+      - -p3           # number of python processes
+      - --lazy-apps   # fork early (avoid sharing same DB connection)
+      - --uwsgi-socket
+      - 0.0.0.0:3031  # Listen on 3031
+      - -i            # don't use multiple interpreters
+      - --py-autoreload
+      - "1"           # watch the python file and reload
+      - --wsgi-file
+      - foobar.py     # name of the python file to load
