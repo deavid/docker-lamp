@@ -90,3 +90,18 @@ services:
     ports:
       - "2202:22"
     command: admin:passwordadmin2:1000
+  ftpd-php-apache-1:
+    image: stilliard/pure-ftpd
+    ports:
+      - "2101:21"
+      - "21010-21019:21010-21019"
+    expose:
+      - "21010-21019"
+    volumes:
+     - ./www/php-apache-1:/var/www/html/
+    environment:
+      PUBLICHOST: "localhost"  # Replace this with your server public IP
+      FTP_USER_NAME: admin
+      FTP_USER_PASS: adminpass
+      FTP_USER_HOME: /var/www/html/
+      FTP_PASSIVE_PORTS: "21010:21019"
