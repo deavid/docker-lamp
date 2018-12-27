@@ -13,16 +13,19 @@ services:
       - php-fpm-1
       - pgadmin4
       - phpmyadmin
+    restart: always
   php-apache-1:
     image: php:7.3-apache-stretch
     volumes:
      - ./www/php-apache-1:/var/www/html/
     # ports:
     #   - "86:80"
+    restart: always
   php-fpm-1:
     image: php:7.3-fpm-stretch
     volumes:
      - ./www/php-fpm-1:/var/www/html/
+    restart: always
   mysql-1:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
@@ -30,6 +33,7 @@ services:
      - ./mysql-1/datadir:/var/lib/mysql
     # ports:
     #   - "33061:3306"
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD
   postgresql-1:
@@ -39,6 +43,7 @@ services:
     environment:
       - POSTGRES_PASSWORD
       - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
     environment:
@@ -47,6 +52,7 @@ services:
     #  - 8081:80
     volumes:
      - /sessions
+    restart: always
   pgadmin4:
     build: ./pgadmin4
     image: lamp/pgadmin4
@@ -55,13 +61,10 @@ services:
     environment:
       - DEFAULT_USER=postgres
       - DEFAULT_PASSWORD
-  python-uwsgi:
+    restart: always
+  python-uwsgi-1:
     build: ./python-uwsgi
     image: lamp/python-uwsgi
-  python-uwsgi-1:
-    image: lamp/python-uwsgi
-    depends_on:
-      - python-uwsgi
     volumes:
       - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py
     command:
@@ -77,6 +80,7 @@ services:
       - "1"           # watch the python file and reload
       - --wsgi-file
       - foobar.py     # name of the python file to load
+    restart: always
   sftp-php-apache-1:
     image: atmoz/sftp:debian-stretch
     volumes:
@@ -84,6 +88,7 @@ services:
     ports:
       - "2201:22"
     command: admin:passwordadmin:1000
+    restart: always
   sftp-python-uwsgi-1:
     image: atmoz/sftp:debian-stretch
     volumes:
@@ -91,6 +96,7 @@ services:
     ports:
       - "2202:22"
     command: admin:passwordadmin2:1000
+    restart: always
   ftpd-php-apache-1:
     image: stilliard/pure-ftpd
     ports:
@@ -106,3 +112,4 @@ services:
       FTP_USER_PASS: adminpass
       FTP_USER_HOME: /var/www/html/
       FTP_PASSIVE_PORTS: "21010:21019"
+    restart: always
