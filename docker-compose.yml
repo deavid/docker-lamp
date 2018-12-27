@@ -2,6 +2,13 @@ version: '3'
 services:
   master-webserver:
     image: nginx:1.14
+    networks:
+      - master-webserver
+      - php-apache-1
+      - php-fpm-1
+      - pgadmin4
+      - phpmyadmin
+      - python-uwsgi-1
     volumes:
      - ./master-webserver/sites-enabled:/etc/nginx/conf.d:ro
      - ./www:/var/www:ro
@@ -16,13 +23,21 @@ services:
     restart: always
   php-apache-1:
     image: php:7.3-apache-stretch
+    networks:
+      - php-apache-1
+    read_only: true
     volumes:
      - ./www/php-apache-1:/var/www/html/:ro
      - ./www/php-apache-1/uploads:/var/www/html/uploads/
+    tmpfs:
+      - /run/apache2/
     # ports:
     #   - "86:80"
     restart: always
   php-fpm-1:
+    networks:
+      - php-fpm-1
+      - mysql-1
     image: php:7.3-fpm-stretch
     volumes:
      - ./www/php-fpm-1:/var/www/html/:ro
@@ -30,6 +45,8 @@ services:
   mysql-1:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - mysql-1
     volumes:
      - ./mysql-1/datadir:/var/lib/mysql
     # ports:
@@ -39,6 +56,8 @@ services:
       - MYSQL_ROOT_PASSWORD
   postgresql-1:
     image: postgres:11
+    networks:
+      - postgresql-1
     volumes:
      - ./postgresql-1/pgdata:/var/lib/postgresql/data/pgdata
     environment:
@@ -47,6 +66,9 @@ services:
     restart: always
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
+    networks:
+      - phpmyadmin
+      - mysql-1
     environment:
       - PMA_HOST=mysql-1
     # ports:
@@ -56,9 +78,10 @@ services:
     restart: always
   pgadmin4:
     build: ./pgadmin4
+    networks:
+      - pgadmin4
+      - postgresql-1
     image: lamp/pgadmin4
-    ports:
-      - "5050:5050"
     environment:
       - DEFAULT_USER=postgres
       - DEFAULT_PASSWORD
@@ -66,6 +89,9 @@ services:
   python-uwsgi-1:
     build: ./python-uwsgi
     image: lamp/python-uwsgi
+    networks:
+      - python-uwsgi-1
+      - postgresql-1
     volumes:
       - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py:ro
     command:
@@ -84,6 +110,8 @@ services:
     restart: always
   sftp-php-apache-1:
     image: atmoz/sftp:debian-stretch
+    networks:
+      - sftp-php-apache-1
     volumes:
       - ./www/php-apache-1:/home/admin/php-apache-1
     ports:
@@ -92,6 +120,8 @@ services:
     restart: always
   sftp-python-uwsgi-1:
     image: atmoz/sftp:debian-stretch
+    networks:
+      - sftp-python-uwsgi-1
     volumes:
       - ./www/python-uwsgi-1:/home/admin/python-uwsgi-1
     ports:
@@ -100,6 +130,8 @@ services:
     restart: always
   ftpd-php-apache-1:
     image: stilliard/pure-ftpd
+    networks:
+      - ftpd-php-apache-1
     ports:
       - "2101:21"
       - "21010-21019:21010-21019"
@@ -114,3 +146,16 @@ services:
       FTP_USER_HOME: /var/www/html/
       FTP_PASSIVE_PORTS: "21010:21019"
     restart: always
+networks:
+  default: {internal: true}
+  master-webserver: {}
+  php-apache-1: {internal: true}
+  php-fpm-1: {internal: true}
+  mysql-1: {internal: true}
+  postgresql-1: {internal: true}
+  phpmyadmin: {internal: true}
+  pgadmin4: {internal: true}
+  python-uwsgi-1: {internal: true}
+  sftp-php-apache-1: {}
+  sftp-python-uwsgi-1: {}
+  ftpd-php-apache-1: {}
