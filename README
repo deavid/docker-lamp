@@ -12,6 +12,10 @@ to a server in production that properly isolates each
 website, so even if they contained serious vulnerabilities,
 the other tenants would be not affected.
 
+BE CAREFUL!! THIS OPENS SFTP AND FTP WITH DEFAULT PASSWORDS.
+DON'T EXPOSE THIS TO UNTRUSTED NETWORKS AND/OR CHANGE THE
+PASSWORDS BEFORE RUNNING.
+
 Currently this spins up the following services:
 
 - Nginx (master)
@@ -24,6 +28,8 @@ Currently this spins up the following services:
 - PhpMyAdmin
 - PostgreSQL
 - PgAdmin4
+- FTP
+- SFTP
 
 Virtual hosts require your /etc/hosts file to be modified.
 See "Emulated domains" chapter bellow.
@@ -102,6 +108,25 @@ Here is some info for each service:
   - Admin user is "postgres". Use "root" and "yourpassword".
   - Once logged in, create a connection to host "postgresql-1"
     and user "postgres", password "yourpassword".
+  - Nginx aggressive caching has been enabled for this site.
+    This is for demo purposes on side-effects of this kind
+    of caching, not suited for real-life production envs.
+- SFTP:
+  - Opens port 2201 for php-apache-1 with write access
+    - User and password is admin:passwordadmin
+  - Opens port 2202 for python-uwsgi-1 with write access
+    - User and password is admin:passwordadmin2
+  - The owner of the files has to be UID 1000 or change the
+    docker-compose.yml file
+  - BE CAREFUL AS THIS ALLOWS ANYONE THAT KNOWS THE PASSWORD
+    TO CHANGE OR CREATE FILES, THEREFORE IF EXPOSED TO INTERNET
+    THIS WILL LEAD TO REMOTE CODE EXECUTION.
+- FTP:
+  - Opens port 2101 for php-apache-1 with write access
+  - User and password is admin:adminpass
+  - BE CAREFUL AS THIS ALLOWS ANYONE THAT KNOWS THE PASSWORD
+    TO CHANGE OR CREATE FILES, THEREFORE IF EXPOSED TO INTERNET
+    THIS WILL LEAD TO REMOTE CODE EXECUTION.
 
 All code is provided for learning purposes. You can adapt this for
 your needs at your own risk.
