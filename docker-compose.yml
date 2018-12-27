@@ -3,8 +3,8 @@ services:
   master-webserver:
     image: nginx:1.14
     volumes:
-     - ./master-webserver/sites-enabled:/etc/nginx/conf.d
-     - ./www:/var/www
+     - ./master-webserver/sites-enabled:/etc/nginx/conf.d:ro
+     - ./www:/var/www:ro
      - ./master-webserver/cache:/cache
     ports:
      - "85:85"
@@ -17,14 +17,14 @@ services:
   php-apache-1:
     image: php:7.3-apache-stretch
     volumes:
-     - ./www/php-apache-1:/var/www/html/
+     - ./www/php-apache-1:/var/www/html/:ro
     # ports:
     #   - "86:80"
     restart: always
   php-fpm-1:
     image: php:7.3-fpm-stretch
     volumes:
-     - ./www/php-fpm-1:/var/www/html/
+     - ./www/php-fpm-1:/var/www/html/:ro
     restart: always
   mysql-1:
     image: mysql:8.0
@@ -66,7 +66,7 @@ services:
     build: ./python-uwsgi
     image: lamp/python-uwsgi
     volumes:
-      - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py
+      - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py:ro
     command:
       - uwsgi
       - --uid
