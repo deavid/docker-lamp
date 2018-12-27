@@ -18,6 +18,7 @@ services:
     image: php:7.3-apache-stretch
     volumes:
      - ./www/php-apache-1:/var/www/html/:ro
+     - ./www/php-apache-1/uploads:/var/www/html/uploads/
     # ports:
     #   - "86:80"
     restart: always
