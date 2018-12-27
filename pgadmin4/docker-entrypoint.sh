@@ -49,7 +49,7 @@ if [ "$1" = 'pgadmin4' ]; then
 		file_env 'DEFAULT_PASSWORD' 'admin'
 		export PGADMIN_SETUP_EMAIL=${DEFAULT_USER}
 		export PGADMIN_SETUP_PASSWORD=${DEFAULT_PASSWORD}
-
+		echo "CONSOLE_LOG_LEVEL = logging.INFO" >> config_local.py
 		python setup.py
 
 		echo

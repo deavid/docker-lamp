@@ -5,6 +5,7 @@ services:
     volumes:
      - ./master-webserver/sites-enabled:/etc/nginx/conf.d
      - ./www:/var/www
+     - ./master-webserver/cache:/cache
     ports:
      - "85:85"
     depends_on:
