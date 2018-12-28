@@ -116,7 +116,7 @@ services:
       - ./www/php-apache-1:/home/admin/php-apache-1
     ports:
       - "2201:22"
-    command: admin:passwordadmin:1000
+    command: admin:$$1$$Kv3LD.h5$$Zzcq9QemRAq/.AD8QRhYr1:e:1000
     restart: always
   sftp-python-uwsgi-1:
     image: atmoz/sftp:debian-stretch
@@ -126,7 +126,7 @@ services:
       - ./www/python-uwsgi-1:/home/admin/python-uwsgi-1
     ports:
       - "2202:22"
-    command: admin:passwordadmin2:1000
+    command: admin:$$1$$Iuu6OCAV$$biLkSdg7888B9tkm8ca.p1:e:1000
     restart: always
   ftpd-php-apache-1:
     image: stilliard/pure-ftpd
@@ -140,11 +140,11 @@ services:
     volumes:
      - ./www/php-apache-1:/var/www/html/
     environment:
-      PUBLICHOST: "localhost"  # Replace this with your server public IP
-      FTP_USER_NAME: admin
-      FTP_USER_PASS: adminpass
-      FTP_USER_HOME: /var/www/html/
-      FTP_PASSIVE_PORTS: "21010:21019"
+      - PUBLICHOST=localhost  # Replace this with your server public IP
+      - FTP_PASSIVE_PORTS=21010:21019
+      - FTP_USER_HOME=/var/www/html/
+      - FTP_USER_NAME=admin
+      - FTP_USER_PASS=${FTP_PHP_APACHE_1_PASS-}
     restart: always
 networks:
   default: {internal: true}
