@@ -12,10 +12,12 @@ services:
       - python-uwsgi-1
     volumes:
      - ./master-webserver/sites-enabled:/etc/nginx/conf.d:ro
+     - ./master-webserver/certs:/etc/nginx/certs:ro
      - ./www:/var/www:ro
      - ./master-webserver/cache:/cache
     ports:
      - "85:85"
+     - "443:443"
     restart: always
   php-apache-1:
     image: php:7.3-apache-stretch
