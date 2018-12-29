@@ -6,6 +6,7 @@ services:
       - master-webserver
       - php-apache-1
       - php-fpm-1
+      - php-fpm-1-admin
       - pgadmin4
       - phpmyadmin
       - python-uwsgi-1
@@ -15,11 +16,6 @@ services:
      - ./master-webserver/cache:/cache
     ports:
      - "85:85"
-    depends_on:
-      - php-apache-1
-      - php-fpm-1
-      - pgadmin4
-      - phpmyadmin
     restart: always
   php-apache-1:
     image: php:7.3-apache-stretch
@@ -41,6 +37,14 @@ services:
     image: php:7.3-fpm-stretch
     volumes:
      - ./www/php-fpm-1:/var/www/html/:ro
+    restart: always
+  php-fpm-1-admin:
+    networks:
+      - php-fpm-1-admin
+      - mysql-1
+    image: php:7.3-fpm-stretch
+    volumes:
+     - ./www/php-fpm-1:/var/www/html/
     restart: always
   mysql-1:
     image: mysql:8.0
@@ -159,3 +163,4 @@ networks:
   sftp-php-apache-1: {}
   sftp-python-uwsgi-1: {}
   ftpd-php-apache-1: {}
+  php-fpm-1-admin: {}
