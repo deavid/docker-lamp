@@ -141,16 +141,20 @@ services:
     ports:
       - "2101:21"
       - "21010-21019:21010-21019"
-    expose:
-      - "21010-21019"
     volumes:
      - ./www/php-apache-1:/var/www/html/
+     - ./master-webserver/certs/php-fpm-1.both.pem:/etc/ssl/private/pure-ftpd.pem
     environment:
       - PUBLICHOST=localhost  # Replace this with your server public IP
       - FTP_PASSIVE_PORTS=21010:21019
       - FTP_USER_HOME=/var/www/html/
       - FTP_USER_NAME=admin
       - FTP_USER_PASS=${FTP_PHP_APACHE_1_PASS-}
+      - ADDED_FLAGS=--tls=3
+      # - TLS_USE_DSAPRAM=true
+      # - TLS_CN=php-apache-1
+      # - TLS_ORG=lamp
+      # - TLS_C=ES
     restart: always
   letsencrypt:
     build: ./letsencrypt
