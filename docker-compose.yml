@@ -152,6 +152,15 @@ services:
       - FTP_USER_NAME=admin
       - FTP_USER_PASS=${FTP_PHP_APACHE_1_PASS-}
     restart: always
+  letsencrypt:
+    build: ./letsencrypt
+    image: lamp/letsencrypt
+    volumes:
+     - ./master-webserver/certs:/certs
+     - ./www:/var/www
+     - ./letsencrypt-etc:/etc/letsencrypt
+    networks:
+      - letsencrypt
 networks:
   default: {internal: true}
   master-webserver: {}
@@ -166,3 +175,4 @@ networks:
   sftp-python-uwsgi-1: {}
   ftpd-php-apache-1: {}
   php-fpm-1-admin: {}
+  letsencrypt: {}
