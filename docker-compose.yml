@@ -10,6 +10,8 @@ services:
       - pgadmin4
       - phpmyadmin
       - python-uwsgi-1
+    depends_on:
+      - php-apache-1
     volumes:
      - ./master-webserver/sites-enabled:/etc/nginx/conf.d:ro
      - ./master-webserver/certs:/etc/nginx/certs:ro
