@@ -100,6 +100,7 @@ services:
     networks:
       - python-uwsgi-1
       - postgresql-1
+      - email-relay
     volumes:
       - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py:ro
     command:
@@ -167,6 +168,16 @@ services:
      - ./letsencrypt-etc:/etc/letsencrypt
     networks:
       - letsencrypt
+  email-relay:
+    image: namshi/smtp
+    networks:
+      - email-relay
+    environment:
+      - SMARTHOST_ADDRESS=mail.mysmtp.com
+      - SMARTHOST_PORT=587
+      - SMARTHOST_USER=myuser
+      - SMARTHOST_PASSWORD=secret
+      - SMARTHOST_ALIASES=*.mysmtp.com
 networks:
   default: {internal: true}
   master-webserver: {}
@@ -182,3 +193,4 @@ networks:
   ftpd-php-apache-1: {}
   php-fpm-1-admin: {}
   letsencrypt: {}
+  email-relay: {}
