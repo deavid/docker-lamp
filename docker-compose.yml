@@ -10,6 +10,7 @@ services:
       - pgadmin4
       - phpmyadmin
       - python-uwsgi-1
+      - container-admin
     depends_on:
       - php-apache-1
     volumes:
@@ -102,7 +103,7 @@ services:
       - postgresql-1
       - email-relay
     volumes:
-      - ./python-uwsgi-1/foobar.py:/usr/src/app/foobar.py:ro
+      - ./www-cgi/python-uwsgi-1/foobar.py:/usr/src/app/foobar.py:ro
     command:
       - uwsgi
       - --uid
@@ -117,6 +118,14 @@ services:
       - --wsgi-file
       - foobar.py     # name of the python file to load
     restart: always
+  container-admin:
+    build: ./flask
+    image: lamp/flask
+    networks:
+      - container-admin
+    volumes:
+      - ./www-cgi/container-admin:/usr/src/app/:ro
+    command: ./flask-uwsgi.sh
   sftp-php-apache-1:
     image: atmoz/sftp:debian-stretch
     networks:
@@ -188,6 +197,7 @@ networks:
   phpmyadmin: {internal: true}
   pgadmin4: {internal: true}
   python-uwsgi-1: {internal: true}
+  container-admin: {internal: true}
   sftp-php-apache-1: {}
   sftp-python-uwsgi-1: {}
   ftpd-php-apache-1: {}
