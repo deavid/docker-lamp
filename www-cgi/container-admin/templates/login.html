@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_helpers.html" import render_field %}
 {% block title %}Login{% endblock %}
 {% block splash %}
   <div class="small-wrapper">
@@ -16,20 +17,15 @@
 
               <h2 class="content-head content-head-ribbon">Log in to activate your FTP/SFTP</h2>
 
-                <form class="pure-form pure-form-stacked">
-                    <fieldset>
-                        <label for="email">Email</label>
-                        <input id="email" type="email" placeholder="Your Email">
+              <form class="pure-form pure-form-stacked" target="/login" method=post>
+                <fieldset>
+                  {{ render_field(form.email) }}
+                  {{ render_field(form.token) }}
+                  {{ render_field(form.password) }}
+                  <button type="submit" class="pure-button">Log In</button>
+                </fieldset>
+              </form>
 
-                        <label for="token">Token</label>
-                        <input id="token" type="text" placeholder="Your Token from your mobile device">
-
-                        <label for="message">Password</label>
-                        <input id="password" type="password" placeholder="Your Password">
-
-                        <button type="submit" class="pure-button">Log In</button>
-                    </fieldset>
-                </form>
           </div>
       </div>
 {% include 'contact.html' %}

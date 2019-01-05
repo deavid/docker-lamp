@@ -331,3 +331,13 @@ a:hover {
 .ribbon label {
     color: #aaa;
 }
+
+fieldset {
+  color: #404748;
+}
+
+.field-errors {
+  color: #ff2060;
+  font-size: 0.85rem;
+  margin-top: 0;
+}
