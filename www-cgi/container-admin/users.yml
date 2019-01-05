@@ -1,0 +1,6 @@
+user@example.com:
+  # Use: mkpasswd -m sha256crypt
+  password: $5$DL.QACO3Eb$Bk/8J3F5GF1Dbb9vb0mMQqoNuo1VKR4VyNNCw27fBs8
+  containers:
+    - sftp-php-apache-1
+    - ftpd-php-apache-1
