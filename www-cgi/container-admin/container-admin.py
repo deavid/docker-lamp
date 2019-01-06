@@ -137,7 +137,7 @@ def admin():
     if user is None:
         return redirect(url_for('login'))
     return render_template(
-        'app.html',
+        'admin.html',
         session=yaml.dump(session._get_current_object()),
         **user
         )
