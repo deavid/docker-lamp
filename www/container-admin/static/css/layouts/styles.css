@@ -370,6 +370,7 @@ fieldset {
     padding: 0.9em 1em;
     border-bottom: 1px solid #ddd;
     border-left: 6px solid transparent;
+    margin-right: -6px;
 }
 
 .email-item-selected {
@@ -426,58 +427,14 @@ fieldset {
 
 #layout {
     margin-top: 62px;
+    padding: 0;
 }
 
 #list {
-    margin-top: 62px;
-    margin-left: -250px;
+    margin: 0;
+    margin-bottom: 1em;
     font-size: 90%;
-}
-
-/*
- * -- TABLET (AND UP) MEDIA QUERIES --
- * On tablets and other medium-sized devices, we want to customize some
- * of the mobile styles.
- */
-@media (min-width: 40em) {
-
-    /* Move the layout over so we can fit the nav + list in on the left */
-    #layout {
-        padding-left:250px; /* "left col (nav + list)" width */
-        position: relative;
-    }
-
-    /* These are position:fixed; elements that will be in the left 500px of the screen */
-    #list {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        overflow: auto;
-        width: 100%;
-        height: 40%;
-        border-bottom: 1px solid #ddd;
-    }
-
-    /* Show the menu items on the larger screen */
-    .nav-inner {
-        display: block;
-        padding: 2em 0;
-    }
-
-    /* Hide the "Menu" button on larger screens */
-    #nav .nav-menu-button {
-        display: none;
-    }
-
-    #main {
-        position: fixed;
-        top: 40%;
-        right: 0;
-        bottom: 0;
-        left: 150px;
-        overflow: auto;
-    }
-
+    border-top: 1px solid #ddd;
 }
 
 /*
@@ -485,22 +442,32 @@ fieldset {
  * On desktops and other large-sized devices, we want to customize some
  * of the mobile styles.
  */
-@media (min-width: 60em) {
+@media (min-width: 48em) {
+
+    #layout {
+        padding-left:300px; /* "left col (nav + list)" width */
+        position: relative;
+    }
 
     /* This will take up the entire height, and be a little thinner */
     #list {
-        width:250px;
+        margin-top: 62px;
+        margin-bottom: 0;
+        margin-left: -300px;
+        width: 300px;
         height: 100%;
         border-right: 1px solid #ddd;
         font-size: auto;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        overflow: auto;
 
     }
 
     /* This will now take up it's own column, so don't need position: fixed; */
     #main {
-        position: static;
-        margin: 0;
-        padding: 0;
+        overflow: auto;
     }
 }
 
@@ -517,31 +484,31 @@ fieldset {
 
 /* pure-hidden-xs */
 @media screen and (max-width:567px) {
-    .pure-visible-sm{display:none}
-    .pure-visible-md{display:none}
-    .pure-visible-lg{display:none}
-    .pure-visible-xl{display:none}
-    .pure-hidden-xs{display:none}
+    .pure-visible-sm{display:none !important}
+    .pure-visible-md{display:none !important}
+    .pure-visible-lg{display:none !important}
+    .pure-visible-xl{display:none !important}
+    .pure-hidden-xs{display:none !important}
 }
 /* pure-hidden-sm */
 @media screen and (min-width:568px) and (max-width:767px) {
-    .pure-visible-md{display:none}
-    .pure-visible-lg{display:none}
-    .pure-visible-xl{display:none}
-    .pure-hidden-sm{display:none}
+    .pure-visible-md{display:none !important}
+    .pure-visible-lg{display:none !important}
+    .pure-visible-xl{display:none !important}
+    .pure-hidden-sm{display:none !important}
 }
 /* pure-hidden-md */
 @media screen and (min-width:768px) and (max-width:1023px) {
-    .pure-visible-lg{display:none}
-    .pure-visible-xl{display:none}
-    .pure-hidden-md{display:none}
+    .pure-visible-lg{display:none !important}
+    .pure-visible-xl{display:none !important}
+    .pure-hidden-md{display:none !important}
 }
 /* pure-hidden-lg */
 @media screen and (min-width:1024px) and (max-width:1279px) {
-    .pure-visible-xl{display:none}
-    .pure-hidden-lg{display:none}
+    .pure-visible-xl{display:none !important}
+    .pure-hidden-lg{display:none !important}
 }
 /* pure-hidden-xl */
 @media screen and (min-width:1280px) {
-    .pure-hidden-xl{display:none}
+    .pure-hidden-xl{display:none !important}
 }

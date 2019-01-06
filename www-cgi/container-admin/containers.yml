@@ -1,0 +1,6 @@
+sftp-php-apache-1:
+  title: SFTP for PHP-Apache-1
+  subtitle: Remember to disable access when you're finished
+ftpd-php-apache-1:
+  title: Insecure FTP for PHP-Apache-1
+  subtitle: Please use SFTP instead. FTP is insecure

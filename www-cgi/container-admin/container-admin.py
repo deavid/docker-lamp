@@ -53,6 +53,21 @@ class LoginForm(Form):
         )
 
 
+__containers_db, __containers_db_stamp = None, None
+
+
+def get_containers():
+    global __containers_db
+    global __containers_db_stamp
+    filename = os.path.join(curpath, "containers.yml")
+    new_stamp = os.stat(filename).st_mtime
+    if new_stamp != __containers_db_stamp:
+        with open(filename, 'r') as stream:
+            __containers_db = yaml.load(stream)
+            __containers_db_stamp = new_stamp
+    return __containers_db
+
+
 @app.route("/")
 def home():
     user = get_user() or {}
@@ -118,10 +133,11 @@ def get_user():
     if not (valid_until > now):
         logger.info("Cookie expired: (cookie) %s >= (now) %s", valid_until, now)
         return None
-
+    expire_in_min = (valid_until - now).total_seconds() // 60
     return {
         "email": email,
-        "containers": containers
+        "available_containers": containers,
+        "expire_in_min": expire_in_min
     }
 
 
@@ -132,12 +148,17 @@ def logout():
 
 
 @app.route("/admin")
-def admin():
+@app.route("/admin/<container>")
+def admin(container=None):
     user = get_user()
     if user is None:
         return redirect(url_for('login'))
+    if container is not None and container not in user["available_containers"]:
+        return redirect(url_for('admin'))
+    containers = get_containers()
     return render_template(
         'admin.html',
-        session=yaml.dump(session._get_current_object()),
+        active_container=container,
+        containers=containers,
         **user
         )

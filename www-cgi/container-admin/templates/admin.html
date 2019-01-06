@@ -4,75 +4,37 @@
 {% endblock %}
 {% block content %}
 <div id="layout" class="content pure-g">
-    <div id="list" class="pure-u-1">
-      {% for container in containers %}
-        <div class="email-item pure-g">
-            <div class="pure-u">
-                <img width="64" height="64" alt="network ftp/sftp" class="avatar" src="/static/img/common/network-workgroup.png">
-            </div>
-
-            <div class="pure-u-3-4">
-                <h5 class="email-name"><a href="/admin/{{ container }}">{{ container }}</a></h5>
-            </div>
-        </div>
-      {% endfor %}
-        <div class="email-item email-item-selected pure-g">
-            <div class="pure-u">
-                <img width="64" height="64" alt="network ftp/sftp" class="avatar" src="/static/img/common/network-workgroup.png">
-            </div>
-
-            <div class="pure-u-3-4">
-                <h5 class="email-name">Tilo Mitra</h5>
-                <h4 class="email-subject">Hello from Toronto</h4>
-                <p class="email-desc">
-                    Hey, I just wanted to check in with you from Toronto. I got here earlier today.
-                </p>
-            </div>
-        </div>
-
-        <div class="email-item email-item-unread pure-g">
-            <div class="pure-u">
-                <img width="64" height="64" alt="network ftp/sftp" class="avatar" src="/static/img/common/network-workgroup.png">
-            </div>
-
-            <div class="pure-u-3-4">
-                <h5 class="email-name">YUI Library</h5>
-                <h4 class="email-subject">You have 5 bugs assigned to you</h4>
-                <p class="email-desc">
-                    Duis aute irure dolor in reprehenderit in voluptate velit essecillum dolore eu fugiat nulla.
-                </p>
-            </div>
-        </div>
-
-        <div class="email-item pure-g">
-            <div class="pure-u">
-                <img width="64" height="64" alt="network ftp/sftp" class="avatar" src="/static/img/common/network-workgroup.png">
-            </div>
-
-            <div class="pure-u-3-4">
-                <h5 class="email-name">Reid Burke</h5>
-                <h4 class="email-subject">Re: Design Language</h4>
-                <p class="email-desc">
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa.
-                </p>
-            </div>
-        </div>
-
-    </div>
 
     <div id="main" class="pure-u-1">
         <div class="email-content">
+          {% if active_container %}
+          {% set name = active_container %}
+          {% set title = containers[name]["title"] %}
+          {% set subtitle = containers[name]["subtitle"] %}
             <div class="email-content-header pure-g">
-                <div class="pure-u-1-2">
+                <div class="pure-u-1 pure-u-lg-1-5">
+                    <img width="96" height="96" alt="network ftp/sftp" src="/static/img/common/network-workgroup.png">
+                </div>
+                <div class="pure-u-1 pure-u-lg-4-5">
+                    <h1 class="email-content-title">{{ title }}</h1>
+                    <p class="email-content-subtitle">
+                        {{ subtitle }}
+                    </p>
+                </div>
+
+                <div class="email-content-controls pure-u-1">
+                    <button class="secondary-button pure-button">Enable Service</button>
+                    <button class="secondary-button pure-button">Disable Service</button>
+                </div>
+            </div>
+
+          {% else %}
+            <div class="email-content-header pure-g">
+                <div class="pure-u-1">
                     <h1 class="email-content-title">Hi {{ email }},</h1>
                     <p class="email-content-subtitle">
                         welcome to your control panel
                     </p>
-                </div>
-
-                <div class="email-content-controls pure-u-1-2">
-                    <button class="secondary-button pure-button">Enable Service</button>
-                    <button class="secondary-button pure-button">Disable Service</button>
                 </div>
             </div>
 
@@ -84,13 +46,38 @@
                     Some of the services will also auto-generate a password when you activate them.
                 </p>
                 <p>
-                    Your session will be closed automatically in {{ exipre_in_min }} minutes or when you close your browser.
+                    Your session will be closed automatically in {{"%d"|format(expire_in_min)}} minutes or when you close your browser.
                 </p>
                 <p>
                     If you want, you can close your session now by clicking the top-right link for "Log out".
                 </p>
             </div>
+          {% endif %}
         </div>
     </div>
+
+    <div id="list" class="pure-u-1">
+      {% for name in available_containers %}
+      {% set title = containers[name]["title"] %}
+      {% set subtitle = containers[name]["subtitle"] %}
+        <div class="email-item pure-g pure-u-1 pure-u-sm-1-2 pure-u-md-1 {% if name == active_container %}email-item-selected email-item-unread{% endif %}">
+            <div class="pure-u">
+                <img width="64" height="64" alt="network ftp/sftp" class="avatar" src="/static/img/common/network-workgroup.png">
+            </div>
+
+            <div class="pure-u-3-4">
+                <h5 class="email-name"><a href="/admin/{{ name }}">{{ name }}</a></h5>
+            </div>
+            <div class="pure-u-1">
+                <h4 class="email-subject">{{ title }}</h4>
+                <p class="email-desc">
+                    {{ subtitle }}
+                </p>
+            </div>
+        </div>
+      {% endfor %}
+
+    </div>
+
 </div>
 {% endblock %}
