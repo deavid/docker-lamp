@@ -1,12 +1,31 @@
 import os
 import os.path
 import sys
+import logging
 import crypt
 import yaml
 import datetime
+import dateutil.parser
 from hmac import compare_digest
 from flask import Flask, render_template, request, url_for, redirect, session
 from wtforms import Form, StringField, PasswordField, validators
+from logging.config import dictConfig
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(name)s:%(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
 
 curpath = os.path.abspath(os.path.dirname(sys.argv[0]))
 app = Flask(__name__)
@@ -44,7 +63,7 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         email = form.email.data
-        token = form.token.data
+        # token = form.token.data
         password = form.password.data
         with open(os.path.join(curpath, "users.yml"), 'r') as stream:
             user_db = yaml.load(stream)
@@ -60,7 +79,9 @@ def login():
         if not is_valid:
             form.password.errors.append('The username or password is not valid')
         if is_valid:
-            session["data"] = user_db[email]
+            session.clear()
+            session["email"] = email
+            session["containers"] = user_db[email]["containers"]
             valid_until = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30)
             # Extra data for increased secuirity on later validation
             session["valid_until"] = valid_until.isoformat()
@@ -70,6 +91,39 @@ def login():
     return render_template('login.html', form=form)
 
 
+def get_user():
+    logger = logging.getLogger("auth")
+    try:
+        email = session["email"]
+        containers = session["containers"]
+        valid_until = session["valid_until"]
+        user_agent = session["user_agent"]
+        remote_addr = session["remote_addr"]
+    except KeyError:
+        logger.exception("Error retrieving session keys; probably old cookie")
+        return None
+    if user_agent != request.user_agent.string:
+        logger.warn("User agent did not match: (cookie) %s != (request) %s", user_agent, request.user_agent.string)
+        return None
+    if remote_addr != request.environ['REMOTE_ADDR']:
+        logger.warn("Request IP did not match: (cookie) %s != (request) %s", remote_addr, request.environ['REMOTE_ADDR'])
+        return None
+    valid_until = dateutil.parser.parse(valid_until)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    # The following condition is "double-reversed" to ensure that errors from types, NaN, etc, get catched as well
+    if not (valid_until > now):
+        logger.info("Cookie expired: (cookie) %s >= (now) %s", valid_until, now)
+        return None
+
+    return {
+        "email": email,
+        "containers": containers
+    }
+
+
 @app.route("/admin")
 def admin():
+    user = get_user()
+    if user is None:
+        return redirect(url_for('login'))
     return render_template('app.html', session=yaml.dump(session._get_current_object()))
