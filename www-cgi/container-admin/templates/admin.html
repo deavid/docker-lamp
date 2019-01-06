@@ -21,12 +21,47 @@
                         {{ subtitle }}
                     </p>
                 </div>
-
+                {% if not action %}
                 <div class="email-content-controls pure-u-1">
-                    <button class="secondary-button pure-button">Enable Service</button>
-                    <button class="secondary-button pure-button">Disable Service</button>
+                  <form style="display:inline-block" method=post>
+                    <input type="hidden" name="action" value="enable">
+                    <button type="submit" class="secondary-button pure-button">Enable Service</button>
+                  </form>
+                  <form style="display:inline-block" method=post>
+                    <input type="hidden" name="action" value="disable">
+                    <button type="submit" class="secondary-button pure-button">Disable Service</button>
+                  </form>
                 </div>
+                {% endif %}
             </div>
+            {% if action == "enable" %}
+            <div class="email-content-body">
+                <p>
+                    The service <b>{{name}}</b> has been enabled for 30 minutes for the IP {{ remote_addr }}
+                </p>
+                <p>
+                    A new password has been set: <b>{{new_password}}</b>
+                </p>
+                <p>
+                    Once you have noted the password, navigate away or press the following button:
+                </p>
+                <form method=post>
+                  <input type="hidden" name="action" value="reload">
+                  <button type="submit" class="secondary-button pure-button">Done</button>
+                </form>
+            </div>
+            {% endif %}
+            {% if action == "disable" %}
+            <div class="email-content-body">
+                <p>
+                    The service <b>{{name}}</b> has been disabled
+                </p>
+                <form method=post>
+                  <input type="hidden" name="action" value="reload">
+                  <button type="submit" class="secondary-button pure-button">Done</button>
+                </form>
+            </div>
+            {% endif %}
 
           {% else %}
             <div class="email-content-header pure-g">

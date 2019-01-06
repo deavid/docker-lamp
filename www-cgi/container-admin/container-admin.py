@@ -53,6 +53,17 @@ class LoginForm(Form):
         )
 
 
+class ActionForm(Form):
+    action = StringField(
+        'Action to take (enable/disable)',
+        [validators.Length(min=4, max=16)],
+        )
+
+
+def mkpasswd():
+    return crypt.mksalt(crypt.METHOD_SHA256).replace("$5$", "").replace(".", "A")
+
+
 __containers_db, __containers_db_stamp = None, None
 
 
@@ -148,7 +159,7 @@ def logout():
 
 
 @app.route("/admin")
-@app.route("/admin/<container>")
+@app.route("/admin/<container>", methods=['GET', 'POST'])
 def admin(container=None):
     user = get_user()
     if user is None:
@@ -156,9 +167,21 @@ def admin(container=None):
     if container is not None and container not in user["available_containers"]:
         return redirect(url_for('admin'))
     containers = get_containers()
+    form = ActionForm(request.form)
+    action = request.method == 'POST' and form.validate() and form.action.data
+    new_password = None
+    remote_addr = session["remote_addr"]
+    if action == "reload":
+        return redirect(url_for('admin', container=container))
+    if action == "enable":
+        new_password = mkpasswd()
+
     return render_template(
         'admin.html',
         active_container=container,
         containers=containers,
+        action=action,
+        new_password=new_password,
+        remote_addr=remote_addr,
         **user
         )
