@@ -430,7 +430,7 @@ fieldset {
 
 #list {
     margin-top: 62px;
-    margin-left: -350px;
+    margin-left: -250px;
     font-size: 90%;
 }
 
@@ -443,7 +443,7 @@ fieldset {
 
     /* Move the layout over so we can fit the nav + list in on the left */
     #layout {
-        padding-left:350px; /* "left col (nav + list)" width */
+        padding-left:250px; /* "left col (nav + list)" width */
         position: relative;
     }
 
@@ -476,7 +476,6 @@ fieldset {
         bottom: 0;
         left: 150px;
         overflow: auto;
-        width: auto; /* so that it's not 100% */
     }
 
 }
@@ -490,7 +489,7 @@ fieldset {
 
     /* This will take up the entire height, and be a little thinner */
     #list {
-        width:350px;
+        width:250px;
         height: 100%;
         border-right: 1px solid #ddd;
         font-size: auto;

@@ -54,12 +54,16 @@ class LoginForm(Form):
 
 
 @app.route("/")
-def hello():
-    return render_template('home.html', environ=repr(request.environ))
+def home():
+    user = get_user() or {}
+    return render_template('home.html', environ=repr(request.environ), **user)
 
 
 @app.route("/login/", methods=['GET', 'POST'])
 def login():
+    user = get_user()
+    if user:
+        return redirect(url_for('admin'))
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         email = form.email.data
@@ -121,9 +125,19 @@ def get_user():
     }
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
+
 @app.route("/admin")
 def admin():
     user = get_user()
     if user is None:
         return redirect(url_for('login'))
-    return render_template('app.html', session=yaml.dump(session._get_current_object()))
+    return render_template(
+        'app.html',
+        session=yaml.dump(session._get_current_object()),
+        **user
+        )

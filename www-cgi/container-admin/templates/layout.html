@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <link rel="stylesheet" href="/static/css/layouts/styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">    
     {% endblock %}
 <body>
 
@@ -20,8 +22,13 @@
           <a class="pure-menu-heading" href="">Service Administrator</a>
 
           <ul class="pure-menu-list">
-              <li class="pure-menu-item pure-menu-selected"><a href="/" class="pure-menu-link">Home</a></li>
-              <li class="pure-menu-item"><a href="/login" class="pure-menu-link">Login</a></li>
+              <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+              {% if email %}
+                <li class="pure-menu-item"><a href="/admin" class="pure-menu-link">{{ email }}</a></li>
+                <li class="pure-menu-item"><a href="/logout" class="pure-menu-link">Log out</a></li>
+              {% else %}
+                <li class="pure-menu-item"><a href="/login" class="pure-menu-link">Login</a></li>
+              {% endif %}
           </ul>
       </div>
   </div>
