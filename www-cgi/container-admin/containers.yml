@@ -1,6 +1,8 @@
 sftp-php-apache-1:
   title: SFTP for PHP-Apache-1
   subtitle: Remember to disable access when you're finished
+  ipsets: port-2201
 ftpd-php-apache-1:
   title: Insecure FTP for PHP-Apache-1
   subtitle: Please use SFTP instead. FTP is insecure
+  ipsets: port-2101

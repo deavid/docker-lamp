@@ -125,6 +125,7 @@ services:
       - container-admin
     volumes:
       - ./www-cgi/container-admin:/usr/src/app/:ro
+      - ./container-admin/ipsets:/ipsets
     command: ./flask-uwsgi.sh
   sftp-php-apache-1:
     image: atmoz/sftp:debian-stretch

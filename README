@@ -139,3 +139,51 @@ https://github.com/fenglc/dockercloud-pgadmin4/
 If you need any other licensing (not likely because is MIT licensed)
 or removing the license notice itself, feel free to contact me via email
 at deavidsedice@gmail.com
+
+
+ipset create myset hash:ip timeout 3600
+iptables -I INPUT -m set --match-set myset src -j DROP
+
+socat UNIX-RECV:/tmp/test.sock 'EXEC:ipset restore -exist'
+
+socat STDIO UNIX-SEND:/tmp/test.sock
+add port-2201 192.168.0.233
+list
+add myset 192.168.0.233
+list
+
+$ sudo aptitude install iptables-persistent ipset-persistent incron
+$ nano
+/etc/iptables/rules.v4
+*filter
+-I INPUT -p tcp --dport 2201 -m set ! --match-set port-2201 src -j DROP
+-I INPUT -p tcp --dport 2202 -m set ! --match-set port-2202 src -j DROP
+-I INPUT -p tcp -m multiport --dports 2101,21010:21019 -m set ! --match-set port-2101 src -j DROP
+COMMIT
+
+/etc/iptables/ipsets
+create port-2201 hash:ip timeout 1800
+create port-2202 hash:ip timeout 1800
+create port-2101 hash:ip timeout 1800
+create port-2102 hash:ip timeout 1800
+
+
+$ netfilter-persistent start
+$ sudo service docker restart
+$ docker-compose up -d container-admin
+$ nano /etc/incron.allow
+root
+
+$ incrontab -e
+/..../docker-lamp/container-admin/ipsets/ipsets.txt IN_MODIFY /sbin/ipset restore -exist -file /..../docker-lamp/container-admin/ipsets/ipsets.txt
+
+https://github.com/rancher/rancher/issues/7691
+look at variables to prevent nginx failing when some container is down, or to keep the ip updating between container restarts:
+You can fix this by setting an DNS resolver :
+resolver 169.254.169.250 valid=5s ipv6=off;
+
+and filling an variable with your DNS name :
+set $backendweb web;
+proxy_pass http://$backendweb:8000;
+
+maybe we need a local dns resolver as names appear in /etc/hosts

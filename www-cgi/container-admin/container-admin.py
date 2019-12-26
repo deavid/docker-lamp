@@ -1,9 +1,11 @@
 import os
 import os.path
+import time
 import sys
 import logging
 import crypt
 import yaml
+import re
 import datetime
 import dateutil.parser
 from hmac import compare_digest
@@ -161,19 +163,38 @@ def logout():
 @app.route("/admin")
 @app.route("/admin/<container>", methods=['GET', 'POST'])
 def admin(container=None):
+    logger = logging.getLogger("admin-page")
     user = get_user()
     if user is None:
-        return redirect(url_for('login'))
+        logger.warn("User is None")
+        return redirect(url_for('home'))
     if container is not None and container not in user["available_containers"]:
+        logger.warn("Container URL and not available to the user!")
         return redirect(url_for('admin'))
     containers = get_containers()
+    if container is not None and container not in containers:
+        logger.warn("non existent container")
+        return redirect(url_for('admin'))
+    container_obj = container and containers[container]
     form = ActionForm(request.form)
     action = request.method == 'POST' and form.validate() and form.action.data
     new_password = None
     remote_addr = session["remote_addr"]
+    if not re.match(r"^([0-9]{1,3}\.){3}[0-9]{1,3}$", remote_addr):
+        logger.warn("Remote IP <%s> not a valid IP" % remote_addr)
+        return redirect(url_for('home'))
+
     if action == "reload":
         return redirect(url_for('admin', container=container))
     if action == "enable":
+        ipsets_name = container_obj["ipsets"]
+        f1 = open("/ipsets/ipsets.txt", "w")
+        f1.write("add %s %s\n" % (ipsets_name, remote_addr))
+        f1.close()
+        time.sleep(0.2)
+        f1 = open("/ipsets/ipsets.txt", "w")
+        f1.write("\n")
+        f1.close()
         new_password = mkpasswd()
 
     return render_template(
